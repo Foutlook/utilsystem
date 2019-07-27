@@ -47,7 +47,6 @@ public class LockAspectAdvice {
 
         // todo key放方法入参上 参数值控制
         String key = findLockKeyParameter(point);
-        log.info("ke:{}", key);
         if (key == null) {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
         }
@@ -60,7 +59,7 @@ public class LockAspectAdvice {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解expirationSeconds设置错误(expirationSeconds应大于0小于3600)");
         }
 
-        Object proceed = null;
+        Object proceed;
         RedissonLockUtils redissonLockUtils = new RedissonLockUtils(redissonClient, key);
         try {
             Boolean tryLock = redissonLockUtils.tryLock(waitTime, expiration);

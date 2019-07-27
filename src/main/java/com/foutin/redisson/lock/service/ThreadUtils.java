@@ -1,4 +1,6 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.service;
+
+import com.foutin.redisson.lock.service.RedissonLockService;
 
 /**
  * @author xingkai.fan

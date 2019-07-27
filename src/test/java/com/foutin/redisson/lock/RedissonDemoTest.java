@@ -1,7 +1,7 @@
 package com.foutin.redisson.lock;
 
-import com.foutin.redisson.lock.cluster.RedissonLockService;
-import com.foutin.redisson.lock.cluster.ThreadUtils;
+import com.foutin.redisson.lock.service.RedissonLockService;
+import com.foutin.redisson.lock.service.ThreadUtils;
 import com.foutin.utils.BaseTest;
 import org.junit.Test;
 import org.redisson.api.RLock;
@@ -60,7 +60,12 @@ public class RedissonDemoTest extends BaseTest {
     }
 
     @Test
-    public void testAop() {
+    public void testReentrantLock() {
+        redissonLockService.redissonLock("1121892383982");
+    }
+
+    @Test
+    public void testCallChain() {
         redissonLockService.redissonLock("1121892383982");
     }
 
