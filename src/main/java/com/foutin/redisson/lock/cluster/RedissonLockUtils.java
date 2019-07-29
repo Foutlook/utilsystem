@@ -17,6 +17,8 @@ public class RedissonLockUtils {
 
     private RedissonClient redissonClient;
     private static final String LOCK_KEY = "lockKey_";
+    private Long waitTimeSeconds;
+    private Long expirationSeconds;
     private RLock lock;
 
     public RedissonLockUtils(RedissonClient redissonClient, String key) {
@@ -26,10 +28,12 @@ public class RedissonLockUtils {
 
     private RLock init(String key) {
         log.info(">>>初始化锁对象...");
-        return redissonClient.getLock(LOCK_KEY + key);
+        return redissonClient.getFairLock(LOCK_KEY + key);
     }
 
-    public Boolean tryLock(Long waitTimeSeconds, Long expirationSeconds) throws InterruptedException {
+    Boolean tryLock(Long waitTimeSeconds, Long expirationSeconds) throws InterruptedException {
+        this.waitTimeSeconds = waitTimeSeconds;
+        this.expirationSeconds = expirationSeconds;
         log.info(">>>开始获取锁...");
         return lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
     }
@@ -39,4 +43,36 @@ public class RedissonLockUtils {
         lock.unlock();
     }
 
+    /**
+     * 重试获取锁
+     * @param time 重试次数
+     * @param sleepMillis 睡眠时间
+     * @return
+     * @throws InterruptedException
+     */
+    Boolean retryLock(int time, long sleepMillis) throws InterruptedException {
+        log.info(">>>开始重试获取锁...");
+        boolean locked;
+        while (time > 0) {
+            locked = lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
+            if (locked) {
+                log.info(">>>重试获取锁成功...");
+                return true;
+            }
+            time--;
+            Thread.sleep(sleepMillis);
+        }
+
+        // 无限次重试
+        while (time < 0) {
+            locked = lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
+            if (locked) {
+                log.info(">>>重试获取锁成功...");
+                return true;
+            }
+            Thread.sleep(sleepMillis);
+        }
+        log.info(">>>重试获取锁失败...");
+        return false;
+    }
 }

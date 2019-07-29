@@ -6,8 +6,10 @@ import com.foutin.utils.BaseTest;
 import org.junit.Test;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.redisson.misc.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -60,19 +62,22 @@ public class RedissonDemoTest extends BaseTest {
     }
 
     @Test
-    public void testReentrantLock() {
+    public void testReentrantLock() throws InterruptedException {
+        System.out.println(Charset.defaultCharset().name());
+        System.out.println(System.getProperty("file.encoding"));
+        System.out.println(URIBuilder.create("redis://192.168.6.23:6381"));
         redissonLockService.redissonLock("1121892383982");
     }
 
     @Test
-    public void testCallChain() {
+    public void testCallChain() throws InterruptedException {
         redissonLockService.redissonLock("1121892383982");
     }
 
     // 多线程测试
     @Test
     public void testThreadAop() throws InterruptedException {
-        for (int i = 1; i < 10; i++) {
+        for (int i = 1; i < 5; i++) {
             ThreadUtils threadUtils = new ThreadUtils(redissonLockService);
             threadUtils.start();
         }

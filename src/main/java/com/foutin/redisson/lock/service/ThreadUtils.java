@@ -19,6 +19,10 @@ public class ThreadUtils extends Thread {
     @Override
     public void run() {
         System.out.println("run:" + Thread.currentThread().getId());
-        redissonLockService.redissonLock("1092183091");
+        try {
+            redissonLockService.redissonLock("1092183091");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

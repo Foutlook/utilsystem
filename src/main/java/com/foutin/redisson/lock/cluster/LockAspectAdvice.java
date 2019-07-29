@@ -30,11 +30,13 @@ public class LockAspectAdvice {
     private RedissonClient redissonClient;
 
     private final static long MIX_WAIT_TIME = 0;
-    private final static long MAX_WAIT_TIME = 60;
+    private final static long MAX_WAIT_TIME = 600;
     private final static long MIX_EXPIRATION = 0;
     private final static long MAX_EXPIRATION = 3600;
 
-    // todo 锁：注解名，通用化
+    /**
+     * 切点
+     */
     @Pointcut("execution(* com.foutin..*(..))&&@annotation(CustomReentrantLock)")
     private void pointcut() {
     }
@@ -45,7 +47,7 @@ public class LockAspectAdvice {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         CustomReentrantLock customReentrantLock = method.getAnnotation(CustomReentrantLock.class);
 
-        // todo key放方法入参上 参数值控制
+        // 获取参数方法注解的key
         String key = findLockKeyParameter(point);
         if (key == null) {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
@@ -58,31 +60,37 @@ public class LockAspectAdvice {
         if (expiration <= MIX_EXPIRATION || expiration >= MAX_EXPIRATION) {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解expirationSeconds设置错误(expirationSeconds应大于0小于3600)");
         }
+        RetryStrategyEnum strategy = customReentrantLock.strategy();
 
         Object proceed;
         RedissonLockUtils redissonLockUtils = new RedissonLockUtils(redissonClient, key);
+        Boolean locked = false;
         try {
-            Boolean tryLock = redissonLockUtils.tryLock(waitTime, expiration);
-            if (tryLock) {
+            locked = redissonLockUtils.tryLock(waitTime, expiration);
+            if (locked) {
                 log.info("<<<获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                 // 成功获取锁 这里处理业务
-                proceed = point.proceed();
-                // todo 宕机的情况下，测试
+                proceed = executeBusiness(point, method.getName(), key);
+                /*System.exit(0);*/
             } else {
-                log.error("获取锁失败,方法名：{},锁key：{}", method.getName(), key);
-                throw new RuntimeException("尝试获取锁失败");
+                // 如果获取锁失败怎么处理？ 尝试重新获取锁，尝试3次
+                locked = retryStrategy(redissonLockUtils, strategy);
+                if (locked) {
+                    // 重试锁成功，处理业务
+                    proceed = executeBusiness(point, method.getName(), key);
+                } else {
+                    log.error("获取锁失败,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
+                    throw new RuntimeException("获取锁失败");
+                }
             }
-            // todo 需要处理失败
         } catch (InterruptedException e) {
-            // todo error 处理有问题，获取锁、业务方法执行均会被捕获
             log.error("获取锁失败,方法名：{},锁key：{}", method.getName(), key, e);
             throw new RuntimeException("获取锁失败", e);
-        } catch (Throwable e) {
-            log.error("业务功能执行失败,方法名：{},锁key：{}", method.getName(), key, e);
-            throw new RuntimeException("业务功能执行失败", e);
         } finally {
-            redissonLockUtils.unLock();
-            log.info("<<<锁释放成功,方法名：{}", method.getName());
+            if (locked) {
+                redissonLockUtils.unLock();
+                log.info("<<<锁释放成功,方法名：{}", method.getName());
+            }
         }
 
         return proceed;
@@ -106,5 +114,30 @@ public class LockAspectAdvice {
             return annotation.key();
         }
         return null;
+    }
+
+    private Object executeBusiness(ProceedingJoinPoint point, String methodName, String key) {
+        Object proceed = null;
+        try {
+            proceed = point.proceed();
+        } catch (Throwable e) {
+            log.error("业务功能执行失败,方法名：{},锁key：{}", methodName, key, e);
+        }
+        return proceed;
+    }
+
+    private Boolean retryStrategy(RedissonLockUtils redissonLockUtils, RetryStrategyEnum strategy) throws InterruptedException {
+        log.info("开始重试获取锁, 重试策略：{}", strategy);
+        Boolean locked = false;
+        if (RetryStrategyEnum.NO_RETRY.equals(strategy)) {
+            locked = redissonLockUtils.retryLock(0, 20);
+        }
+        if (RetryStrategyEnum.TIME_RETRY.equals(strategy)) {
+            locked = redissonLockUtils.retryLock(1, 20);
+        }
+        if (RetryStrategyEnum.ALL_RETRY.equals(strategy)) {
+            locked = redissonLockUtils.retryLock(-1, 20);
+        }
+        return locked;
     }
 }

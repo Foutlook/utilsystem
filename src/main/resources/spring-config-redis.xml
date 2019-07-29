@@ -16,10 +16,10 @@
         <constructor-arg value="${redis.cluster2.hostname}"/>
         <constructor-arg value="${redis.cluster2.port}" type="int"/>
     </bean>
-    <!--<bean id="redisNode3" class="org.springframework.data.redis.connection.RedisNode">
+    <bean id="redisNode3" class="org.springframework.data.redis.connection.RedisNode">
         <constructor-arg value="${redis.cluster3.hostname}"/>
         <constructor-arg value="${redis.cluster3.port}" type="int"/>
-    </bean>-->
+    </bean>
     <bean id="redisNode4" class="org.springframework.data.redis.connection.RedisNode">
         <constructor-arg value="${redis.cluster4.hostname}"/>
         <constructor-arg value="${redis.cluster4.port}" type="int"/>
@@ -37,7 +37,7 @@
             <set>
                 <ref bean="redisNode1"/>
                 <ref bean="redisNode2"/>
-                <!--<ref bean="redisNode3"/>-->
+                <ref bean="redisNode3"/>
                 <ref bean="redisNode4"/>
                 <ref bean="redisNode5"/>
                 <ref bean="redisNode6"/>
