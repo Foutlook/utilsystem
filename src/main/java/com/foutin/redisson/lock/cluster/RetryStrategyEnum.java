@@ -7,39 +7,38 @@ package com.foutin.redisson.lock.cluster;
  */
 public enum RetryStrategyEnum {
     /**
-     * 不重试,retryTime为0
+     * 不重试
      */
-    NO_RETRY(0),
+    NO_RETRY("不重试,未获取到锁直接报错"),
     /**
-     * 重试数次，retryTime为一个正整数值
+     * 在等待时间里重试数次
      */
-    TIME_RETRY(3),
+    TIME_RETRY("重试指定等待时间,获取锁失败报错"),
     /**
-     * 无限次重试，直到获取锁 retryTime为负数
+     * 一直等待
      */
-    ALL_RETRY(-1);
+    ALL_RETRY("无限制等待,直到获取锁");
 
-    private Integer time;
+    private String retryValue;
 
-    RetryStrategyEnum(Integer time) {
-        setTime(time);
+    RetryStrategyEnum(String retryValue) {
+        setRetryValue(retryValue);
     }
 
-    public Integer getTime() {
-        return time;
+    public String getRetryValue() {
+        return retryValue;
     }
 
-    public void setTime(Integer time) {
-        this.time = time;
+    public void setRetryValue(String retryValue) {
+        this.retryValue = retryValue;
     }
 
-    public static RetryStrategyEnum setEnum(Integer time, Integer newTime) {
-        if (time == null) {
+    public static RetryStrategyEnum getEnum(String retryValue) {
+        if (retryValue == null) {
             return null;
         }
         for (RetryStrategyEnum retryStrategyEnum : RetryStrategyEnum.values()) {
-            if (retryStrategyEnum.getTime().equals(time)) {
-                retryStrategyEnum.setTime(newTime);
+            if (retryStrategyEnum.getRetryValue().equals(retryValue)) {
                 return retryStrategyEnum;
             }
         }

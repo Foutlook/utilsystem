@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * redisson lock测试
  *
  * @author xingkai.fan
- * @create 2019-07-25
+ * @date 2019-07-25
  */
 public class RedissonDemoTest extends BaseTest {
 
@@ -63,9 +63,6 @@ public class RedissonDemoTest extends BaseTest {
 
     @Test
     public void testReentrantLock() throws InterruptedException {
-        System.out.println(Charset.defaultCharset().name());
-        System.out.println(System.getProperty("file.encoding"));
-        System.out.println(URIBuilder.create("redis://192.168.6.23:6381"));
         redissonLockService.redissonLock("1121892383982");
     }
 

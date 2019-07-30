@@ -30,7 +30,7 @@ public class LockAspectAdvice {
     private RedissonClient redissonClient;
 
     private final static long MIX_WAIT_TIME = 0;
-    private final static long MAX_WAIT_TIME = 600;
+    private final static long DEF_WAIT_TIME = 2;
     private final static long MIX_EXPIRATION = 0;
     private final static long MAX_EXPIRATION = 3600;
 
@@ -53,12 +53,12 @@ public class LockAspectAdvice {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
         }
         long waitTime = customReentrantLock.waitTimeSeconds();
-        if (waitTime <= MIX_WAIT_TIME || waitTime >= MAX_WAIT_TIME) {
-            throw new RuntimeException("方法名:" + method.getName() + "参数注解waitTimeSeconds设置错误(waitTimeSeconds应大于0小于60)");
+        if (waitTime < MIX_WAIT_TIME) {
+            waitTime = DEF_WAIT_TIME;
         }
         long expiration = customReentrantLock.expirationSeconds();
-        if (expiration <= MIX_EXPIRATION || expiration >= MAX_EXPIRATION) {
-            throw new RuntimeException("方法名:" + method.getName() + "参数注解expirationSeconds设置错误(expirationSeconds应大于0小于3600)");
+        if (expiration <= MIX_EXPIRATION) {
+            expiration = MIX_EXPIRATION;
         }
         RetryStrategyEnum strategy = customReentrantLock.strategy();
 
@@ -71,15 +71,15 @@ public class LockAspectAdvice {
                 log.info("<<<获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                 // 成功获取锁 这里处理业务
                 proceed = executeBusiness(point, method.getName(), key);
-                /*System.exit(0);*/
             } else {
-                // 如果获取锁失败怎么处理？ 尝试重新获取锁，尝试3次
+                // 尝试重新获取锁
                 locked = retryStrategy(redissonLockUtils, strategy);
                 if (locked) {
+                    log.info("重试获取锁成功,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
                     // 重试锁成功，处理业务
                     proceed = executeBusiness(point, method.getName(), key);
                 } else {
-                    log.error("获取锁失败,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
+                    log.error("重试获取锁失败,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
                     throw new RuntimeException("获取锁失败");
                 }
             }
@@ -127,17 +127,6 @@ public class LockAspectAdvice {
     }
 
     private Boolean retryStrategy(RedissonLockUtils redissonLockUtils, RetryStrategyEnum strategy) throws InterruptedException {
-        log.info("开始重试获取锁, 重试策略：{}", strategy);
-        Boolean locked = false;
-        if (RetryStrategyEnum.NO_RETRY.equals(strategy)) {
-            locked = redissonLockUtils.retryLock(0, 20);
-        }
-        if (RetryStrategyEnum.TIME_RETRY.equals(strategy)) {
-            locked = redissonLockUtils.retryLock(1, 20);
-        }
-        if (RetryStrategyEnum.ALL_RETRY.equals(strategy)) {
-            locked = redissonLockUtils.retryLock(-1, 20);
-        }
-        return locked;
+        return redissonLockUtils.retryLock(strategy);
     }
 }
