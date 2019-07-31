@@ -13,6 +13,10 @@ public abstract class AbstractDistributedLock implements DistributedLock {
 
     private long waitTimeSecond = 2;
 
+    /**
+     * 以下redisson的锁实现方法
+     * ---------------------------------------------------------------
+     */
     @Override
     public Boolean tryLock(String key) throws InterruptedException {
         return tryLock(key, waitTimeSecond, leaseTimeSecond, TimeUnit.SECONDS);
@@ -22,5 +26,4 @@ public abstract class AbstractDistributedLock implements DistributedLock {
     public Boolean tryLock(String key, Long leaseTime, TimeUnit timeUnit) throws InterruptedException {
         return tryLock(key, waitTimeSecond, leaseTime, timeUnit);
     }
-
 }

@@ -6,6 +6,9 @@
 
     <bean id="lockAspectAdvice" class="com.foutin.redisson.lock.cluster.annotation.LockAspectAdvice"/>
 
+    <bean id="distributedLockAspect" class="com.foutin.rediss.lock.aspect.DistributedLockAspect"/>
+
+    <!--redisson锁-->
     <aop:config>
         <aop:pointcut id="pointcut" expression="execution(* com.foutin..*(..)) and @annotation(com.foutin.redisson.lock.cluster.annotation.CustomReentrantLock)"/>
         <aop:aspect ref="lockAspectAdvice">
@@ -13,4 +16,11 @@
         </aop:aspect>
     </aop:config>
 
+    <!--rediss锁-->
+    <aop:config>
+        <aop:pointcut id="lockPoint" expression="@annotation(com.foutin.rediss.lock.annotation.CustomLock)"/>
+        <aop:aspect ref="distributedLockAspect">
+            <aop:around method="around" pointcut-ref="lockPoint"/>
+        </aop:aspect>
+    </aop:config>
 </beans>

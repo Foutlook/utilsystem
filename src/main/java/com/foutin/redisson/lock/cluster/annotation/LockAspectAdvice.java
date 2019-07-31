@@ -29,7 +29,7 @@ public class LockAspectAdvice {
 
         // 获取参数方法注解的key
         String key = findLockKeyParameter(point);
-        if (key == null) {
+        if (ObjectUtils.isEmpty(key)) {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
         }
         long waitTime = customReentrantLock.waitTimeSeconds();
@@ -43,7 +43,7 @@ public class LockAspectAdvice {
                 log.info("<<<获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                 // 成功获取锁 这里处理业务
                 proceed = executeBusiness(point, method.getName(), key);
-                System.exit(0);
+                /*System.exit(0);*/
             } else {
                 log.error("<<<获取锁失败,方法名：{},锁key：{}", method.getName(), key);
                 throw new RuntimeException("获取锁失败");
