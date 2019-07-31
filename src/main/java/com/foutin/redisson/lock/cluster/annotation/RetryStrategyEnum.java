@@ -2,7 +2,7 @@ package com.foutin.redisson.lock.cluster.annotation;
 
 /**
  * @author xingkai.fan
- * @description TODO
+ * @description
  * @date 2019/7/29
  */
 public enum RetryStrategyEnum {

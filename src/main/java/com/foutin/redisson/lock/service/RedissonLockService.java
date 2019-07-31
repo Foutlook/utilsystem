@@ -17,15 +17,19 @@ public class RedissonLockService {
     @Autowired
     private DemoLockService demoLockService;
 
-    @CustomReentrantLock(waitTimeSeconds = -1, expirationSeconds = -5, strategy = RetryStrategyEnum.TIME_RETRY)
-    public void redissonLock(@LockKey(key = "fan")String userId) throws InterruptedException {
+    @CustomReentrantLock(waitTimeSeconds = 8, expirationSeconds = 60)
+    public void redissonLock(@LockKey(key = "fan") String userId) throws InterruptedException {
 
-        System.out.println("fanxingkai-redissonLockService:"+userId);
+        System.out.println("fanxingkai-redissonLockService:" + userId);
 
         Thread.sleep(1000);
-        // 引入另个类方法，同一个key
-        /*demoLockService.demoLock("fanxingkai", 10L);*/
+        // 1.引入另个类方法，不同的key
+        /*demoLockService.demoDiffLock("fanxingkai", 10L);*/
 
+        // 2.相同的key，重入锁
+        /*demoLockService.demoReentrantLock("kaixingfan", 121212L);*/
+
+        // 3.业务代码抛异常
         /*throw new RuntimeException("chucuole ");*/
     }
 
