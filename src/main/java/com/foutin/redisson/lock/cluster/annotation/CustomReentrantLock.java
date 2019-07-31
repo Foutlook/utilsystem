@@ -1,4 +1,4 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.cluster.annotation;
 
 import java.lang.annotation.*;
 
@@ -11,10 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CustomReentrantLock {
-    RetryStrategyEnum strategy() default RetryStrategyEnum.TIME_RETRY;
-    /**
-     * 0 不等待，大于0等待时长，小于0 一直等待
-      */
+    RetryStrategyEnum strategy() default RetryStrategyEnum.CONTINUE_RETRY;
     long waitTimeSeconds() default 2;
     long expirationSeconds() default 15;
 }

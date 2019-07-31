@@ -1,7 +1,7 @@
 package com.foutin.redisson.lock.service;
 
-import com.foutin.redisson.lock.cluster.CustomReentrantLock;
-import com.foutin.redisson.lock.cluster.LockKey;
+import com.foutin.redisson.lock.cluster.annotation.CustomReentrantLock;
+import com.foutin.redisson.lock.cluster.annotation.LockKey;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,5 +1,6 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.cluster.annotation;
 
+import com.foutin.redisson.lock.cluster.utils.RedissonLockUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -11,9 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author xingkai.fan
@@ -29,15 +33,10 @@ public class LockAspectAdvice {
     @Autowired
     private RedissonClient redissonClient;
 
-    private final static long MIX_WAIT_TIME = 0;
-    private final static long DEF_WAIT_TIME = 2;
-    private final static long MIX_EXPIRATION = 0;
-    private final static long MAX_EXPIRATION = 3600;
-
     /**
      * 切点
      */
-    @Pointcut("execution(* com.foutin..*(..))&&@annotation(CustomReentrantLock)")
+    @Pointcut("execution(* com.foutin..*(..))&&@annotation(com.foutin.redisson.lock.cluster.annotation.CustomReentrantLock)")
     private void pointcut() {
     }
 
@@ -49,37 +48,32 @@ public class LockAspectAdvice {
 
         // 获取参数方法注解的key
         String key = findLockKeyParameter(point);
-        if (key == null) {
-            throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
+        if (StringUtils.isEmpty(key)) {
+            Object[] args = point.getArgs();
+            key = Arrays.toString(args);
         }
         long waitTime = customReentrantLock.waitTimeSeconds();
-        if (waitTime < MIX_WAIT_TIME) {
-            waitTime = DEF_WAIT_TIME;
-        }
         long expiration = customReentrantLock.expirationSeconds();
-        if (expiration <= MIX_EXPIRATION) {
-            expiration = MIX_EXPIRATION;
-        }
         RetryStrategyEnum strategy = customReentrantLock.strategy();
 
         Object proceed;
         RedissonLockUtils redissonLockUtils = new RedissonLockUtils(redissonClient, key);
         Boolean locked = false;
         try {
-            locked = redissonLockUtils.tryLock(waitTime, expiration);
+            locked = redissonLockUtils.tryLock(waitTime, expiration, TimeUnit.SECONDS);
             if (locked) {
                 log.info("<<<获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                 // 成功获取锁 这里处理业务
                 proceed = executeBusiness(point, method.getName(), key);
             } else {
                 // 尝试重新获取锁
-                locked = retryStrategy(redissonLockUtils, strategy);
+                locked = retryStrategy(redissonLockUtils, strategy, waitTime, expiration);
                 if (locked) {
-                    log.info("重试获取锁成功,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
+                    log.info("重试获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                     // 重试锁成功，处理业务
                     proceed = executeBusiness(point, method.getName(), key);
                 } else {
-                    log.error("重试获取锁失败,方法名：{},锁key：{},重试策略：{}", method.getName(), key, strategy);
+                    log.error("重试获取锁失败,方法名：{},锁key：{}", method.getName(), key);
                     throw new RuntimeException("获取锁失败");
                 }
             }
@@ -88,7 +82,7 @@ public class LockAspectAdvice {
             throw new RuntimeException("获取锁失败", e);
         } finally {
             if (locked) {
-                redissonLockUtils.unLock();
+                redissonLockUtils.unlock();
                 log.info("<<<锁释放成功,方法名：{}", method.getName());
             }
         }
@@ -126,7 +120,7 @@ public class LockAspectAdvice {
         return proceed;
     }
 
-    private Boolean retryStrategy(RedissonLockUtils redissonLockUtils, RetryStrategyEnum strategy) throws InterruptedException {
-        return redissonLockUtils.retryLock(strategy);
+    private Boolean retryStrategy(RedissonLockUtils redissonLockUtils, RetryStrategyEnum strategy, long waitTime, long expiration) throws InterruptedException {
+        return redissonLockUtils.retryLock(strategy, waitTime, expiration);
     }
 }

@@ -1,4 +1,4 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.cluster.annotation;
 
 import java.lang.annotation.*;
 
@@ -11,5 +11,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface LockKey {
-    String key() default "";
+    String key() default "key";
 }

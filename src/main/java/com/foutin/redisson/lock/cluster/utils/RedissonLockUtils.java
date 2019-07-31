@@ -1,5 +1,7 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.cluster.utils;
 
+import com.foutin.redisson.lock.cluster.AbstractDistributedLock;
+import com.foutin.redisson.lock.cluster.annotation.RetryStrategyEnum;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -12,13 +14,11 @@ import java.util.concurrent.TimeUnit;
  * @description
  * @date 2019/7/26 18:11
  */
-public class RedissonLockUtils {
+public class RedissonLockUtils extends AbstractDistributedLock {
     private static Logger log = LoggerFactory.getLogger(RedissonLockUtils.class);
 
     private RedissonClient redissonClient;
     private static final String LOCK_KEY = "lockKey_";
-    private Long waitTimeSeconds;
-    private Long expirationSeconds;
     private RLock lock;
 
     public RedissonLockUtils(RedissonClient redissonClient, String key) {
@@ -31,14 +31,14 @@ public class RedissonLockUtils {
         return redissonClient.getFairLock(LOCK_KEY + key);
     }
 
-    Boolean tryLock(Long waitTimeSeconds, Long expirationSeconds) throws InterruptedException {
-        this.waitTimeSeconds = waitTimeSeconds;
-        this.expirationSeconds = expirationSeconds;
+    @Override
+    public Boolean tryLock(Long waitTimeSeconds, Long expirationSeconds, TimeUnit unit) throws InterruptedException {
         log.info(">>>开始获取锁...");
-        return lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
+        return lock.tryLock(waitTimeSeconds, expirationSeconds, unit);
     }
 
-    void unLock() {
+    @Override
+    public void unlock() {
         log.info(">>>开始解锁...");
         lock.unlock();
     }
@@ -49,28 +49,21 @@ public class RedissonLockUtils {
      * @return boolean
      * @throws InterruptedException 中断异常
      */
-    Boolean retryLock(RetryStrategyEnum strategy) throws InterruptedException {
+    public Boolean retryLock(RetryStrategyEnum strategy, Long waitTimeSeconds, Long expirationSeconds) throws InterruptedException {
 
         log.info(">>>开始重试获取锁, 重试策略：{}", strategy);
 
-        boolean locked = false;
-        if (RetryStrategyEnum.NO_RETRY.equals(strategy)) {
+        if (RetryStrategyEnum.GIVEUP_RETRY.equals(strategy)) {
             return false;
         }
-        if (RetryStrategyEnum.TIME_RETRY.equals(strategy)) {
-            locked = lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
+        if (RetryStrategyEnum.CONTINUE_RETRY.equals(strategy)) {
+            boolean locked = lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
             if (locked) {
                 log.info("<<<重试获取锁成功...");
                 return true;
             }
             return false;
-
         }
-        if (RetryStrategyEnum.ALL_RETRY.equals(strategy)) {
-            while (!locked) {
-                locked = lock.tryLock(waitTimeSeconds, expirationSeconds, TimeUnit.SECONDS);
-            }
-        }
-        return locked;
+        return false;
     }
 }
