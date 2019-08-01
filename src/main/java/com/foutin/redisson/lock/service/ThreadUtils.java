@@ -27,8 +27,8 @@ public class ThreadUtils extends Thread {
     public void run() {
         System.out.println("run:" + Thread.currentThread().getId());
         try {
-            /*redissonLockService.redissonLock("1092183091");*/
-            redissLockService.sendRedissLock("lll","333");
+            redissonLockService.redissonLock("1092183091");
+            /*redissLockService.sendRedissLock("lll","333");*/
         } catch (Exception e) {
             e.printStackTrace();
         }

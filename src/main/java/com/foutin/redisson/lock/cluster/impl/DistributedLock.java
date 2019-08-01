@@ -9,16 +9,47 @@ import java.util.concurrent.TimeUnit;
  */
 public interface DistributedLock {
 
+    long EXPIRE_TIME_MILLIS = 15000;
+
+    long WAIT_TIME_MILLIS = 1000;
+
     /**
-     * 以下redisson的锁实现方法
-     * --------------------------------------------------------------
+     * 获取锁,默认等待时间和过期时间
+     *
+     * @param key 锁key
+     * @return Boolean
+     * @throws InterruptedException
      */
-    Boolean tryLock(String key) throws InterruptedException;
+    Boolean tryLock(String key);
 
-    Boolean tryLock(String key, Long expirationTime, TimeUnit timeUnit) throws InterruptedException;
+    /**
+     * 获取锁，默认等待时间
+     *
+     * @param key        锁key
+     * @param expireTime 过期时间
+     * @param timeUnit   单位
+     * @return Boolean
+     * @throws InterruptedException
+     */
+    Boolean tryLock(String key, Long expireTime, TimeUnit timeUnit);
 
-    Boolean tryLock(String key, Long waitTime, Long expirationTime, TimeUnit timeUnit) throws InterruptedException;
+    /**
+     * 获取锁，用户自定义
+     *
+     * @param key        锁key
+     * @param waitTime   等待时间
+     * @param expireTime 过期时间
+     * @param timeUnit   单位
+     * @return Boolean
+     * @throws InterruptedException
+     */
+    Boolean tryLock(String key, Long waitTime, Long expireTime, TimeUnit timeUnit);
 
+    /**
+     * 解锁
+     *
+     * @param key 锁key
+     */
     void unlock(String key);
 
 }

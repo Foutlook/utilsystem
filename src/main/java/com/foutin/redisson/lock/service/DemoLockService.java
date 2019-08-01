@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class DemoLockService {
 
-    @CustomReentrantLock(expirationSeconds = 10)
-    public void demoDiffLock(String name, @LockKey(key = "kai") Long id) {
+    @CustomReentrantLock(expireMillis = 10000)
+    public void demoDiffLock(String name, @LockKey Long id) {
 
         System.out.println("fanxingkai-demoLockService:" + id);
         try {
@@ -24,8 +24,8 @@ public class DemoLockService {
         }
     }
 
-    @CustomReentrantLock(expirationSeconds = 10)
-    public void demoReentrantLock(String name, @LockKey(key = "fan") Long id) {
+    @CustomReentrantLock(expireMillis = 10000)
+    public void demoReentrantLock(String name, @LockKey Long id) {
 
         System.out.println("fanxingkai-demoLockService:" + id);
         try {

@@ -22,7 +22,7 @@ public class RedissLockService {
     private RedissLockLineService redissLockLineService;
 
     @CustomLock(action = LockFailAction.CONTINUE,expirationMills = 10000, retryTimes = 5, sleepMills = 600)
-    public void sendRedissLock(@LockKey(key = "name") String name, String sex) {
+    public void sendRedissLock(@LockKey String name, String sex) {
         try {
             /*redissLockLineService.testRedissLock("191989");*/
             Thread.sleep(1000);

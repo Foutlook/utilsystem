@@ -75,10 +75,7 @@ public class DistributedLockAspect {
             if (point.getArgs()[i] == null) {
                 return null;
             }
-            if (ObjectUtils.isEmpty(annotation.key())) {
-                return null;
-            }
-            return annotation.key();
+            return point.getArgs()[i].toString();
         }
         return null;
     }

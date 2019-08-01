@@ -17,8 +17,8 @@ public class RedissonLockService {
     @Autowired
     private DemoLockService demoLockService;
 
-    @CustomReentrantLock(waitTimeSeconds = 8, expirationSeconds = 60)
-    public void redissonLock(@LockKey(key = "fan") String userId) throws InterruptedException {
+    @CustomReentrantLock(waitTimeMillis = 1000, expireMillis = 30000)
+    public void redissonLock(@LockKey String userId) throws InterruptedException {
 
         System.out.println("fanxingkai-redissonLockService:" + userId);
 

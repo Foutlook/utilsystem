@@ -18,7 +18,7 @@ public class RedissLockLineService {
     private static Logger logger = LoggerFactory.getLogger(RedissLockLineService.class);
 
     @CustomLock(action = LockFailAction.GIVEUP, expirationMills = 10000)
-    public void testRedissLock(@LockKey(key = "name") String name) {
+    public void testRedissLock(@LockKey String name) {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {

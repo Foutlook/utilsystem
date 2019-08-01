@@ -25,7 +25,7 @@ public class LockAspectAdvice {
         this.distributedLock = distributedLock;
     }
 
-    public Object around(ProceedingJoinPoint point) {
+    public Object around(ProceedingJoinPoint point) throws Throwable{
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         CustomReentrantLock customReentrantLock = method.getAnnotation(CustomReentrantLock.class);
 
@@ -34,29 +34,28 @@ public class LockAspectAdvice {
         if (ObjectUtils.isEmpty(key)) {
             throw new RuntimeException("方法名:" + method.getName() + "参数注解key为null");
         }
-        long waitTime = customReentrantLock.waitTimeSeconds();
-        long expiration = customReentrantLock.expirationSeconds();
+        long waitTime = customReentrantLock.waitTimeMillis();
+        long expiration = customReentrantLock.expireMillis();
 
         Object proceed;
         Boolean locked = false;
         try {
-            locked = distributedLock.tryLock(key, waitTime, expiration, TimeUnit.SECONDS);
+            locked = distributedLock.tryLock(key, waitTime, expiration, TimeUnit.MILLISECONDS);
             if (locked) {
-                log.info("<<<获取锁成功,方法名：{},锁key：{}", method.getName(), key);
+                log.debug("获取锁成功,方法名：{},锁key：{}", method.getName(), key);
                 // 成功获取锁 这里处理业务
-                proceed = executeBusiness(point, method.getName(), key);
-                /*System.exit(0);*/
+                proceed = point.proceed();
             } else {
-                log.error("<<<获取锁失败,方法名：{},锁key：{}", method.getName(), key);
+                log.warn("获取锁失败,方法名：{},锁key：{}", method.getName(), key);
                 throw new RuntimeException("获取锁失败");
             }
         } catch (InterruptedException e) {
-            log.error("<<<获取锁失败,方法名：{},锁key：{}", method.getName(), key, e);
+            log.warn("获取锁失败,方法名：{},锁key：{}", method.getName(), key, e);
             throw new RuntimeException("获取锁失败", e);
         } finally {
             if (locked) {
                 distributedLock.unlock(key);
-                log.info("<<<锁释放成功,方法名：{}", method.getName());
+                log.debug("锁释放成功,方法名：{}", method.getName());
             }
         }
         return proceed;
@@ -75,21 +74,8 @@ public class LockAspectAdvice {
             if (point.getArgs()[i] == null) {
                 return null;
             }
-            if (ObjectUtils.isEmpty(annotation.key())) {
-                return null;
-            }
-            return annotation.key();
+            return point.getArgs()[i].toString();
         }
         return null;
-    }
-
-    private Object executeBusiness(ProceedingJoinPoint point, String methodName, String key) {
-        Object proceed = null;
-        try {
-            proceed = point.proceed();
-        } catch (Throwable e) {
-            log.error("业务功能执行失败,方法名：{},锁key：{}", methodName, key, e);
-        }
-        return proceed;
     }
 }

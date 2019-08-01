@@ -9,21 +9,13 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractDistributedLock implements DistributedLock {
 
-    private long leaseTimeSecond = 15;
-
-    private long waitTimeSecond = 2;
-
-    /**
-     * 以下redisson的锁实现方法
-     * ---------------------------------------------------------------
-     */
     @Override
-    public Boolean tryLock(String key) throws InterruptedException {
-        return tryLock(key, waitTimeSecond, leaseTimeSecond, TimeUnit.SECONDS);
+    public Boolean tryLock(String key) {
+        return tryLock(key, WAIT_TIME_MILLIS, EXPIRE_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public Boolean tryLock(String key, Long leaseTime, TimeUnit timeUnit) throws InterruptedException {
-        return tryLock(key, waitTimeSecond, leaseTime, timeUnit);
+    public Boolean tryLock(String key, Long expirationTime, TimeUnit timeUnit) {
+        return tryLock(key, WAIT_TIME_MILLIS, expirationTime, timeUnit);
     }
 }

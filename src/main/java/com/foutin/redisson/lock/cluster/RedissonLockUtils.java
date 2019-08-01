@@ -28,15 +28,19 @@ public class RedissonLockUtils extends AbstractDistributedLock {
     }
 
     @Override
-    public Boolean tryLock(String key, Long waitTimeSeconds, Long expirationSeconds, TimeUnit unit) throws InterruptedException {
-        log.info(">>>开始获取锁...");
+    public Boolean tryLock(String key, Long waitTimeSeconds, Long expirationSeconds, TimeUnit unit) {
         RLock lock = init(key);
-        return lock.tryLock(waitTimeSeconds, expirationSeconds, unit);
+        boolean locked = false;
+        try {
+            locked = lock.tryLock(waitTimeSeconds, expirationSeconds, unit);
+        } catch (InterruptedException e) {
+            log.warn("获取锁失败", e);
+        }
+        return locked;
     }
 
     @Override
     public void unlock(String key) {
-        log.info(">>>开始解锁...");
         RLock lock = init(key);
         lock.unlock();
     }
