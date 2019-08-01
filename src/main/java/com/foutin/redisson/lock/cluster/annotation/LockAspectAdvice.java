@@ -5,7 +5,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
@@ -20,8 +19,11 @@ import java.util.concurrent.TimeUnit;
 public class LockAspectAdvice {
     private static Logger log = LoggerFactory.getLogger(LockAspectAdvice.class);
 
-    @Autowired
     private DistributedLock distributedLock;
+
+    public LockAspectAdvice(DistributedLock distributedLock) {
+        this.distributedLock = distributedLock;
+    }
 
     public Object around(ProceedingJoinPoint point) {
         Method method = ((MethodSignature) point.getSignature()).getMethod();

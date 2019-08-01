@@ -1,16 +1,13 @@
 package com.foutin.rediss.lock.aspect;
 
-import com.foutin.rediss.lock.RedisDistributedLockUtils;
 import com.foutin.rediss.lock.annotation.CustomLock;
 import com.foutin.rediss.lock.annotation.LockFailAction;
 import com.foutin.rediss.lock.impl.DistributedReentrantLock;
 import com.foutin.redisson.lock.cluster.annotation.LockKey;
-import com.foutin.redisson.lock.cluster.impl.DistributedLock;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 
 import java.lang.reflect.Method;
@@ -24,8 +21,11 @@ import java.lang.reflect.Parameter;
 public class DistributedLockAspect {
     private static Logger logger = LoggerFactory.getLogger(DistributedLockAspect.class);
 
-    @Autowired
     private DistributedReentrantLock distributedReentrantLock;
+
+    public DistributedLockAspect(DistributedReentrantLock distributedReentrantLock) {
+        this.distributedReentrantLock = distributedReentrantLock;
+    }
 
     public Object around(ProceedingJoinPoint point) throws Throwable {
 

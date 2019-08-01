@@ -17,10 +17,6 @@
     <!-- 支持 @Async 注解 -->
     <task:executor id="annotationExecutor" pool-size="10"/>
 
-    <import resource="spring-redisson.xml"/>
-
-    <import resource="spring-config-redis.xml"/>
-
     <!--设置Aop-->
     <import resource="spring-config-aop.xml"/>
 </beans>

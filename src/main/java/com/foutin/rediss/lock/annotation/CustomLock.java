@@ -22,5 +22,5 @@ public @interface CustomLock {
     long sleepMills() default 500;
 
     /** 重试次数*/
-    int retryTimes() default 15;
+    int retryTimes() default 10;
 }

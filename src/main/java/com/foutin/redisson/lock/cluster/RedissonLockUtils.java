@@ -5,8 +5,6 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,13 +13,15 @@ import java.util.concurrent.TimeUnit;
  * @description
  * @date 2019/7/26 18:11
  */
-@Component
 public class RedissonLockUtils extends AbstractDistributedLock {
     private static Logger log = LoggerFactory.getLogger(RedissonLockUtils.class);
 
-    @Autowired
     private RedissonClient redissonClient;
     private static final String LOCK_KEY = "lockKey_";
+
+    public RedissonLockUtils(RedissonClient redissonClient) {
+        this.redissonClient = redissonClient;
+    }
 
     private RLock init(String key) {
         return redissonClient.getFairLock(LOCK_KEY + key);

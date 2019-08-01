@@ -23,12 +23,10 @@ import java.util.stream.Collectors;
  * @description
  * @date 2019/7/30 11:57
  */
-@Component
 public class RedisDistributedLockUtils extends AbstractDistributedReantrantLock {
 
     private final Logger logger = LoggerFactory.getLogger(RedisDistributedLockUtils.class);
 
-    @Autowired
     private RedisTemplate redisTemplate;
 
     private static ThreadLocal<Map<String, Long>> lockFlag = ThreadLocal.withInitial(ConcurrentHashMap::new);
@@ -51,6 +49,10 @@ public class RedisDistributedLockUtils extends AbstractDistributedReantrantLock 
                 "else " +
                 "    return 0 " +
                 "end ";
+    }
+
+    public RedisDistributedLockUtils(RedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
