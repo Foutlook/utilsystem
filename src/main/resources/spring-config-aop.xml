@@ -7,7 +7,7 @@
     <import resource="spring-redisson.xml"/>
     <import resource="spring-config-redis.xml"/>
     <!--注入redisson类对象属性值-->
-    <bean id="redissonLockUtils" class="com.foutin.redisson.lock.cluster.RedissonLockUtils">
+    <bean id="redissonLockUtils" class="com.foutin.redisson.lock.cluster.impl.RedissonLockImpl">
         <constructor-arg name="redissonClient" ref="redissonClient"/>
     </bean>
     <bean id="lockAspectAdvice" class="com.foutin.redisson.lock.cluster.annotation.LockAspectAdvice">

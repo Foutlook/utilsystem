@@ -1,5 +1,7 @@
 package com.foutin.redisson.lock.cluster.impl;
 
+import com.foutin.redisson.lock.cluster.DistributedLock;
+
 import java.util.concurrent.TimeUnit;
 
 /**

@@ -1,6 +1,5 @@
-package com.foutin.redisson.lock.cluster;
+package com.foutin.redisson.lock.cluster.impl;
 
-import com.foutin.redisson.lock.cluster.impl.AbstractDistributedLock;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -13,13 +12,13 @@ import java.util.concurrent.TimeUnit;
  * @description
  * @date 2019/7/26 18:11
  */
-public class RedissonLockUtils extends AbstractDistributedLock {
-    private static Logger log = LoggerFactory.getLogger(RedissonLockUtils.class);
+public class RedissonLockImpl extends AbstractDistributedLock {
+    private static Logger log = LoggerFactory.getLogger(RedissonLockImpl.class);
 
     private RedissonClient redissonClient;
     private static final String LOCK_KEY = "lockKey_";
 
-    public RedissonLockUtils(RedissonClient redissonClient) {
+    public RedissonLockImpl(RedissonClient redissonClient) {
         this.redissonClient = redissonClient;
     }
 

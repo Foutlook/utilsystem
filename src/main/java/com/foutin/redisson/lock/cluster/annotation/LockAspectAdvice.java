@@ -1,6 +1,6 @@
 package com.foutin.redisson.lock.cluster.annotation;
 
-import com.foutin.redisson.lock.cluster.impl.DistributedLock;
+import com.foutin.redisson.lock.cluster.DistributedLock;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;

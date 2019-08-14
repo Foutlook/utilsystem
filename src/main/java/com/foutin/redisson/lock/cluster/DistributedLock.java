@@ -1,4 +1,4 @@
-package com.foutin.redisson.lock.cluster.impl;
+package com.foutin.redisson.lock.cluster;
 
 import java.util.concurrent.TimeUnit;
 

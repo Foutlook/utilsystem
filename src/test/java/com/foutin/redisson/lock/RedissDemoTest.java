@@ -1,6 +1,7 @@
 package com.foutin.redisson.lock;
 
 import com.foutin.rediss.lock.service.RedissLockService;
+import com.foutin.redisson.lock.service.DemoLockService;
 import com.foutin.redisson.lock.service.ThreadUtils;
 import com.foutin.utils.BaseTest;
 import org.junit.Test;
@@ -15,6 +16,8 @@ public class RedissDemoTest extends BaseTest {
 
     @Autowired
     private RedissLockService redissLockService;
+    @Autowired
+    private DemoLockService demoLockService;
 
     @Test
     public void testRedissLock() {
@@ -29,5 +32,10 @@ public class RedissDemoTest extends BaseTest {
             threadUtils.start();
         }
         Thread.sleep(10000);
+    }
+
+    @Test
+    public void testDemoUtils() {
+        demoLockService.demoUtils("fan");
     }
 }

@@ -2,7 +2,6 @@ package com.foutin.redisson.lock.service;
 
 import com.foutin.redisson.lock.cluster.annotation.CustomReentrantLock;
 import com.foutin.redisson.lock.cluster.annotation.LockKey;
-import com.foutin.redisson.lock.cluster.annotation.RetryStrategyEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
