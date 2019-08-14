@@ -60,7 +60,7 @@ public class DemoLockService {
     }
 
     public void demoMultiLock(List<String> name) {
-        RedissonMultiLock multiLock = redissonLock.tryMultiLock(name, 2000L, 120000L, TimeUnit.MILLISECONDS);
+        RedissonMultiLock multiLock = redissonLock.tryMultiLock(name, 2000L, 120000L);
         try {
             System.out.println("fanxingkai--llll:" + name);
             Thread.sleep(500);

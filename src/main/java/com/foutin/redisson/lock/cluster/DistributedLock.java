@@ -57,6 +57,15 @@ public interface DistributedLock {
     RedissonMultiLock tryMultiLock(List<String> keys);
 
     /**
+     * 获取联锁,默认单位毫秒
+     * @param keys
+     * @param waitTime
+     * @param expireTime
+     * @return
+     */
+    RedissonMultiLock tryMultiLock(List<String> keys, Long waitTime, Long expireTime);
+
+    /**
      * 对多个key同时加锁,获取联锁
      *
      * @param keys       key集合

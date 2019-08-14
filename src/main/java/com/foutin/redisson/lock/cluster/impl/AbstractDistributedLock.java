@@ -29,4 +29,8 @@ public abstract class AbstractDistributedLock implements DistributedLock {
         return tryMultiLock(keys, LockConstants.WAIT_TIME_MILLIS, LockConstants.EXPIRE_TIME_MILLIS, TimeUnit.MILLISECONDS);
     }
 
+    @Override
+    public RedissonMultiLock tryMultiLock(List<String> keys, Long waitTime, Long expireTime) {
+        return tryMultiLock(keys, waitTime, expireTime, TimeUnit.MILLISECONDS);
+    }
 }
