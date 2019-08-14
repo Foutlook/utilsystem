@@ -1,10 +1,13 @@
 package com.foutin.redisson.lock.cluster.impl;
 
+import org.redisson.RedissonMultiLock;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,6 +44,34 @@ public class RedissonLockImpl extends AbstractDistributedLock {
     @Override
     public void unlock(String key) {
         RLock lock = init(key);
-        lock.unlock();
+        boolean locked = lock.isLocked();
+        if (locked) {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public RedissonMultiLock tryMultiLock(List<String> keys, Long waitTime, Long expireTime, TimeUnit timeUnit) {
+        RedissonMultiLock multiLock = getMultiLock(keys);
+        boolean locked = false;
+        try {
+            locked = multiLock.tryLock(waitTime, expireTime, timeUnit);
+        } catch (InterruptedException e) {
+            log.warn("获取联锁失败", e);
+        }
+
+        if (!locked) {
+            log.warn("无法获取联锁");
+            throw new RuntimeException("无法获取联锁");
+        }
+        return multiLock;
+    }
+
+    private RedissonMultiLock getMultiLock(List<String> keys) {
+        List<RLock> rLockList = new ArrayList<>();
+        for (String key : keys) {
+            rLockList.add(init(key));
+        }
+        return new RedissonMultiLock(rLockList.toArray(new RLock[0]));
     }
 }

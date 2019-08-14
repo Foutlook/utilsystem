@@ -3,9 +3,12 @@ package com.foutin.redisson.lock.service;
 import com.foutin.redisson.lock.cluster.annotation.CustomReentrantLock;
 import com.foutin.redisson.lock.cluster.annotation.LockKey;
 import com.foutin.redisson.lock.cluster.impl.RedissonLockImpl;
+import org.redisson.RedissonMultiLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -54,6 +57,17 @@ public class DemoLockService {
                 redissonLock.unlock(name);
             }
         }
+    }
+
+    public void demoMultiLock(List<String> name) {
+        RedissonMultiLock multiLock = redissonLock.tryMultiLock(name, 2000L, 120000L, TimeUnit.MILLISECONDS);
+        try {
+            System.out.println("fanxingkai--llll:" + name);
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        multiLock.unlock();
     }
 
 }

@@ -7,6 +7,9 @@ import com.foutin.utils.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author xingkai.fan
  * @description
@@ -38,4 +41,14 @@ public class RedissDemoTest extends BaseTest {
     public void testDemoUtils() {
         demoLockService.demoUtils("fan");
     }
+
+    @Test
+    public void testDemoMultiLock(){
+        List<String> keys = new ArrayList<>();
+        keys.add("fan");
+        keys.add("xing");
+        keys.add("kai");
+        demoLockService.demoMultiLock(keys);
+    };
+
 }

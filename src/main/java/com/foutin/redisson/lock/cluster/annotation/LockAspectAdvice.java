@@ -53,10 +53,8 @@ public class LockAspectAdvice {
             log.warn("获取锁失败,方法名：{},锁key：{}", method.getName(), key, e);
             throw new RuntimeException("获取锁失败", e);
         } finally {
-            if (locked) {
-                distributedLock.unlock(key);
-                log.debug("锁释放成功,方法名：{}", method.getName());
-            }
+             distributedLock.unlock(key);
+             log.debug("锁释放成功,方法名：{}", method.getName());
         }
         return proceed;
     }
