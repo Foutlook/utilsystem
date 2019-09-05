@@ -38,6 +38,8 @@ public class ZookeeperClientImpl implements ZookeeperClient {
         return curatorFramework;
     }
 
+    // 使用单例的方式来加载CuratorFramework
+
     @Override
     public InterProcessMutex newInterProcessMutex() {
         // todo 不能这样做
