@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:spring-config.properties" ignore-unresolvable="true" />
+
+    <bean id="zookeeperClient" class="com.foutin.zookeeper.lock.ZookeeperClientImpl">
+        <constructor-arg name="curatorFramework" ref="curatorFrameworkFactory"/>
+    </bean>
+
+    <bean id="retryPolicy" class="org.apache.curator.retry.ExponentialBackoffRetry">
+        <constructor-arg name="baseSleepTimeMs" value="${zk.retryPolicy.sleepTimeMs}"/>
+        <constructor-arg name="maxRetries" value="${zk.maxRetries}"/>
+    </bean>
+
+    <bean id="curatorFrameworkFactory" class="org.apache.curator.framework.CuratorFrameworkFactory" factory-method="newClient" init-method="start">
+        <!--ZK服务地址，集群使用逗号分隔-->
+        <constructor-arg name="connectString" value="${zk.serverLists}"/>
+        <!--重试策略-->
+        <constructor-arg name="retryPolicy" ref="retryPolicy"/>
+    </bean>
+
+</beans>

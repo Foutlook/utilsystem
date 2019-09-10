@@ -19,4 +19,6 @@
 
     <!--设置Aop-->
     <import resource="spring-config-aop.xml"/>
+    <!--zookeeper-->
+    <import resource="spring-zookeeper.xml"/>
 </beans>

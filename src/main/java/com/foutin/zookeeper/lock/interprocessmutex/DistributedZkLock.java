@@ -7,9 +7,11 @@ package com.foutin.zookeeper.lock.interprocessmutex;
  */
 public interface DistributedZkLock {
 
-    void sharedReentrantLock(Long waitTime);
+    boolean sharedReentrantLock(Long waitTime);
 
-    void sharedReentrantReadWriteLock(Long waitTime);
+    void sharedReentrantUnlock();
+
+    boolean sharedReentrantReadWriteLock(Long waitTime);
 
     // todo 释放锁
 

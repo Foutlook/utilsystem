@@ -15,11 +15,7 @@ import org.springframework.stereotype.Service;
 @DisconfFile(filename = "spring-config.properties")
 public class ZookeeperConfig {
 
-    private String zkServerLists;
-
-    private String zkRetryPolicySleepTimeMs;
-
-    private String zkMaxRestries;
+    private String zkNameSpace;
 
     private String zkReentrantLockPath;
 
@@ -27,31 +23,13 @@ public class ZookeeperConfig {
 
     private String zkSharedMultiLock;
 
-    @DisconfFileItem(name = "zk.serverLists", associateField = "zkServerLists")
-    public String getZkServerLists() {
-        return zkServerLists;
+    @DisconfFileItem(name = "zk.nameSpace", associateField = "zkNameSpace")
+    public String getZkNameSpace() {
+        return zkNameSpace;
     }
 
-    public void setZkServerLists(String zkServerLists) {
-        this.zkServerLists = zkServerLists;
-    }
-
-    @DisconfFileItem(name = "zk.retryPolicy.sleepTimeMs", associateField = "zkRetryPolicySleepTimeMs")
-    public String getZkRetryPolicySleepTimeMs() {
-        return zkRetryPolicySleepTimeMs;
-    }
-
-    public void setZkRetryPolicySleepTimeMs(String zkRetryPolicySleepTimeMs) {
-        this.zkRetryPolicySleepTimeMs = zkRetryPolicySleepTimeMs;
-    }
-
-    @DisconfFileItem(name = "zk.maxRestries", associateField = "zkMaxRestries")
-    public String getZkMaxRestries() {
-        return zkMaxRestries;
-    }
-
-    public void setZkMaxRestries(String zkMaxRestries) {
-        this.zkMaxRestries = zkMaxRestries;
+    public void setZkNameSpace(String zkNameSpace) {
+        this.zkNameSpace = zkNameSpace;
     }
 
     @DisconfFileItem(name = "zk.sharedReentrantLock", associateField = "zkReentrantLockPath")
