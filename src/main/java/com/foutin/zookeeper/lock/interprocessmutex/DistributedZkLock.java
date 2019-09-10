@@ -1,5 +1,7 @@
 package com.foutin.zookeeper.lock.interprocessmutex;
 
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+
 /**
  * @author xingkai.fan
  * @description zk 实现分布式锁接口
@@ -11,8 +13,11 @@ public interface DistributedZkLock {
 
     void sharedReentrantUnlock();
 
-    boolean sharedReentrantReadWriteLock(Long waitTime);
+    InterProcessMutex sharedReentrantReadLock(Long waitTime);
 
-    // todo 释放锁
+    InterProcessMutex sharedReentrantWriteLock(Long waitTime);
+
+    void sharedReentrantReadWriteUnlock(InterProcessMutex interProcessMutex);
+
 
 }

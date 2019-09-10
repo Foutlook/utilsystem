@@ -32,11 +32,8 @@ public class DistributedZkLockImpl implements DistributedZkLock{
         boolean acquire;
         try {
             acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
-            if (!acquire) {
-                LOGGER.warn("获取锁失败");
-            }
         } catch (Exception e) {
-            LOGGER.warn("获取zk锁失败:{}", e.getMessage());
+            LOGGER.warn("获取zk锁失败", e);
             throw new RuntimeException(e);
         }
         return acquire;
@@ -48,14 +45,52 @@ public class DistributedZkLockImpl implements DistributedZkLock{
         try {
             interProcessMutex.release();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.warn("解锁失败", e);
+            throw new RuntimeException(e);
         }
     }
 
     @Override
-    public boolean sharedReentrantReadWriteLock(Long waitTime) {
+    public InterProcessMutex sharedReentrantReadLock(Long waitTime) {
         InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock();
         InterProcessMutex interProcessMutex = interProcessReadWriteLock.readLock();
-        return false;
+        try {
+            boolean acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
+            if (!acquire) {
+                LOGGER.warn("获取读锁失败");
+                throw new RuntimeException("获取读锁失败");
+            }
+        } catch (Exception e) {
+            LOGGER.warn("获取zk读锁失败", e);
+            throw new RuntimeException(e);
+        }
+        return interProcessMutex;
+    }
+
+    @Override
+    public InterProcessMutex sharedReentrantWriteLock(Long waitTime) {
+        InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock();
+        InterProcessMutex interProcessMutex = interProcessReadWriteLock.writeLock();
+        try {
+            boolean acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
+            if (!acquire) {
+                LOGGER.warn("获取写锁失败");
+                throw new RuntimeException("获取写锁失败");
+            }
+        } catch (Exception e) {
+            LOGGER.warn("获取zk读锁失败", e);
+            throw new RuntimeException(e);
+        }
+        return interProcessMutex;
+    }
+
+    @Override
+    public void sharedReentrantReadWriteUnlock(InterProcessMutex interProcessMutex) {
+        try {
+            interProcessMutex.release();
+        } catch (Exception e) {
+            LOGGER.warn("读写锁解锁失败", e);
+            throw new RuntimeException(e);
+        }
     }
 }

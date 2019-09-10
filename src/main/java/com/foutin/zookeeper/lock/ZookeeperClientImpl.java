@@ -29,10 +29,9 @@ public class ZookeeperClientImpl implements ZookeeperClient {
     }
 
     /**
-     * 初始化操作
+     * 初始化操作，使用命名空间
      */
     public void init(){
-        // 使用命名空间
         curatorFramework  = curatorFramework.usingNamespace(zookeeperConfig.getZkNameSpace());
     }
 
