@@ -6,8 +6,9 @@
 
     <context:property-placeholder location="classpath:spring-config.properties" ignore-unresolvable="true" />
 
-    <bean id="zookeeperClient" class="com.foutin.zookeeper.lock.ZookeeperClientImpl">
+    <bean id="zookeeperClient" class="com.foutin.zookeeper.lock.ZookeeperClientImpl" init-method="init">
         <constructor-arg name="curatorFramework" ref="curatorFrameworkFactory"/>
+        <constructor-arg name="nameSpace" value="${zk.nameSpace}"/>
     </bean>
 
     <bean id="retryPolicy" class="org.apache.curator.retry.ExponentialBackoffRetry">

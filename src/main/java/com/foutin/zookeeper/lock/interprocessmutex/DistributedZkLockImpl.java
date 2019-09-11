@@ -1,9 +1,7 @@
 package com.foutin.zookeeper.lock.interprocessmutex;
 
 import com.foutin.zookeeper.lock.ZookeeperClient;
-import com.foutin.zookeeper.lock.ZookeeperClientImpl;
-import com.foutin.zookeeper.lock.ZookeeperConfig;
-import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
 import org.slf4j.Logger;
@@ -27,21 +25,24 @@ public class DistributedZkLockImpl implements DistributedZkLock{
     private ZookeeperClient zookeeperClient;
 
     @Override
-    public boolean sharedReentrantLock(Long waitTime) {
-        InterProcessMutex interProcessMutex = zookeeperClient.newInterProcessMutex();
+    public InterProcessMutex sharedReentrantLock(String path, Long waitTime) {
+        InterProcessMutex interProcessMutex = zookeeperClient.newInterProcessMutex(path);
         boolean acquire;
         try {
             acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
+            if (!acquire) {
+                LOGGER.warn("获取锁失败");
+                throw new RuntimeException("获取锁失败");
+            }
         } catch (Exception e) {
             LOGGER.warn("获取zk锁失败", e);
             throw new RuntimeException(e);
         }
-        return acquire;
+        return interProcessMutex;
     }
 
     @Override
-    public void sharedReentrantUnlock() {
-        InterProcessMutex interProcessMutex = zookeeperClient.newInterProcessMutex();
+    public void sharedReentrantUnlock(InterProcessMutex interProcessMutex) {
         try {
             interProcessMutex.release();
         } catch (Exception e) {
@@ -51,8 +52,8 @@ public class DistributedZkLockImpl implements DistributedZkLock{
     }
 
     @Override
-    public InterProcessMutex sharedReentrantReadLock(Long waitTime) {
-        InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock();
+    public InterProcessMutex sharedReentrantReadLock(String path, Long waitTime) {
+        InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock(path);
         InterProcessMutex interProcessMutex = interProcessReadWriteLock.readLock();
         try {
             boolean acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
@@ -68,8 +69,8 @@ public class DistributedZkLockImpl implements DistributedZkLock{
     }
 
     @Override
-    public InterProcessMutex sharedReentrantWriteLock(Long waitTime) {
-        InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock();
+    public InterProcessMutex sharedReentrantWriteLock(String path, Long waitTime) {
+        InterProcessReadWriteLock interProcessReadWriteLock = zookeeperClient.newInterProcessReadWriteLock(path);
         InterProcessMutex interProcessMutex = interProcessReadWriteLock.writeLock();
         try {
             boolean acquire = interProcessMutex.acquire(waitTime, TimeUnit.MILLISECONDS);
@@ -90,6 +91,32 @@ public class DistributedZkLockImpl implements DistributedZkLock{
             interProcessMutex.release();
         } catch (Exception e) {
             LOGGER.warn("读写锁解锁失败", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public InterProcessMultiLock multiSharedLock(String path, Long waitTime) {
+        InterProcessMultiLock interProcessMultiLock = zookeeperClient.newInterProcessMultiLock(path);
+        try {
+            boolean acquire = interProcessMultiLock.acquire(waitTime, TimeUnit.MICROSECONDS);
+            if (!acquire) {
+                LOGGER.warn("获取多锁失败");
+                throw new RuntimeException("获取多锁失败");
+            }
+        } catch (Exception e) {
+            LOGGER.warn("获取zk多锁失败");
+            throw new RuntimeException("获取zk多锁失败");
+        }
+        return interProcessMultiLock;
+    }
+
+    @Override
+    public void multiSharedUnlock(InterProcessMultiLock interProcessMultiLock) {
+        try {
+            interProcessMultiLock.release();
+        } catch (Exception e) {
+            LOGGER.warn("多锁锁解锁失败", e);
             throw new RuntimeException(e);
         }
     }

@@ -11,10 +11,10 @@ import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
  */
 public interface ZookeeperClient {
 
-    InterProcessMutex newInterProcessMutex();
+    InterProcessMutex newInterProcessMutex(String lockPath);
 
-    InterProcessReadWriteLock newInterProcessReadWriteLock();
+    InterProcessReadWriteLock newInterProcessReadWriteLock(String lockPath);
 
-    InterProcessMultiLock newInterProcessMultiLock();
+    InterProcessMultiLock newInterProcessMultiLock(String lockPath);
 
 }

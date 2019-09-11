@@ -1,5 +1,6 @@
 package com.foutin.zookeeper.lock.interprocessmutex;
 
+import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 
 /**
@@ -9,15 +10,18 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
  */
 public interface DistributedZkLock {
 
-    boolean sharedReentrantLock(Long waitTime);
+    InterProcessMutex sharedReentrantLock(String path, Long waitTime);
 
-    void sharedReentrantUnlock();
+    void sharedReentrantUnlock(InterProcessMutex interProcessMutex);
 
-    InterProcessMutex sharedReentrantReadLock(Long waitTime);
+    InterProcessMutex sharedReentrantReadLock(String path, Long waitTime);
 
-    InterProcessMutex sharedReentrantWriteLock(Long waitTime);
+    InterProcessMutex sharedReentrantWriteLock(String path, Long waitTime);
 
     void sharedReentrantReadWriteUnlock(InterProcessMutex interProcessMutex);
 
+    InterProcessMultiLock multiSharedLock(String path, Long waitTime);
+
+    void multiSharedUnlock(InterProcessMultiLock interProcessMutex);
 
 }
