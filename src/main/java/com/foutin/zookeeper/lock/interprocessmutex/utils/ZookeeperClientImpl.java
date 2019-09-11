@@ -1,5 +1,6 @@
-package com.foutin.zookeeper.lock;
+package com.foutin.zookeeper.lock.interprocessmutex.utils;
 
+import com.foutin.zookeeper.lock.interprocessmutex.utils.ZookeeperClient;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;

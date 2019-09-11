@@ -1,6 +1,6 @@
 package com.foutin.zookeeper.lock.interprocessmutex;
 
-import com.foutin.zookeeper.lock.ZookeeperClient;
+import com.foutin.zookeeper.lock.interprocessmutex.utils.ZookeeperClient;
 import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/9/4 14:24
  */
 @Service
-public class DistributedZkLockImpl implements DistributedZkLock{
+public class DistributedZkLockImpl implements DistributedZkLock {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DistributedZkLockImpl.class);
 
