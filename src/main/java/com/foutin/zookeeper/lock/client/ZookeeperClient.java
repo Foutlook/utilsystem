@@ -1,5 +1,6 @@
 package com.foutin.zookeeper.lock.client;
 
+import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.framework.recipes.locks.InterProcessReadWriteLock;
@@ -16,5 +17,7 @@ public interface ZookeeperClient {
     InterProcessReadWriteLock newInterProcessReadWriteLock(String lockPath);
 
     InterProcessMultiLock newInterProcessMultiLock(String lockPath);
+
+    CuratorFramework getCuratorFramework();
 
 }

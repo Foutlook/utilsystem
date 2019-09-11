@@ -62,6 +62,7 @@ public class ZookeeperClientImpl implements ZookeeperClient {
         return new InterProcessMultiLock(curatorFramework, multiLockList);
     }
 
+    @Override
     public CuratorFramework getCuratorFramework() {
         return curatorFramework;
     }
