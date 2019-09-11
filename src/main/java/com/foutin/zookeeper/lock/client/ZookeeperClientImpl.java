@@ -1,6 +1,5 @@
-package com.foutin.zookeeper.lock.interprocessmutex.utils;
+package com.foutin.zookeeper.lock.client;
 
-import com.foutin.zookeeper.lock.interprocessmutex.utils.ZookeeperClient;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMultiLock;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
@@ -63,4 +62,7 @@ public class ZookeeperClientImpl implements ZookeeperClient {
         return new InterProcessMultiLock(curatorFramework, multiLockList);
     }
 
+    public CuratorFramework getCuratorFramework() {
+        return curatorFramework;
+    }
 }
