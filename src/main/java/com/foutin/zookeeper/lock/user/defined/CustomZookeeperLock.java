@@ -1,13 +1,14 @@
 package com.foutin.zookeeper.lock.user.defined;
 
 
-import org.apache.curator.framework.recipes.cache.NodeCache;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public interface CustomZookeeperLock {
 
-    void createNote(String path) throws Exception;
+    void acquire() throws Exception;
 
-    NodeCache lockNodeWatch(String path);
+    boolean acquire(long time, TimeUnit unit) throws Exception;
 
-    void closeNodeWatch(NodeCache cache);
+    LockInternals newLockInternals(String path);
 }
