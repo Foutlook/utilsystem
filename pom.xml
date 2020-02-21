@@ -226,6 +226,12 @@
             <artifactId>disconf-client</artifactId>
             <version>2.6.2</version>
         </dependency>
+        <!-- image -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.9</version>
+        </dependency>
 
 
     </dependencies>
