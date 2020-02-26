@@ -17,15 +17,15 @@ import java.io.*;
 public class ImageUtilsTest extends BaseTest {
 
     public static void main(String[] args) throws Exception {
-        String resource = "F:/IMG_20190406_180608.jpg";
-//        String resource = "F:/small_picture.jpg";
-        String target = "F:/out-picture/image-with-watermark.jpg";
+//        String resource = "F:/IMG_20190406_180608.jpg";
+        String resource = "F:/IMG_20190803_170711.jpg";
+        String target = "F:/out-picture/image-with-watermark4.jpg";
         String warter = "F:/water9.png";
 //        ImageOperationUtils.setImageWatermark(resource, target, warter);
         String text = "车架号xxxx";
-//        ImageOperationUtils.setTextWatermark(resource, target, text);
-        OutputStream outputStream = new FileOutputStream("F:/out-picture/image-with-watermark.png");
-        ImageOperationUtils.setTextWatermark(resource, outputStream, text);
+            ImageOperationUtils.setTextWatermark(resource, target, text);
+//        OutputStream outputStream = new FileOutputStream("F:/out-picture/image-with-watermark1.jpg");
+//        ImageOperationUtils.setTextWatermark(resource, outputStream, text);
 //        ByteArrayOutputStream os = new ByteArrayOutputStream();
 //        BufferedImage bufferedImage = ImageOperationUtils.setTextWatermark(resource, text);
 //        ImageIO.write(bufferedImage, "jpg", os);

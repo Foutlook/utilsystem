@@ -43,7 +43,7 @@ public class ImageOperationUtils {
                 // 设置图片大小
                 .size(image.getWidth(), image.getHeight())
                 // 加水印 参数：1.水印位置 2.水印图片 3.不透明度0.0-1.0
-                .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(waterMarkFile), DEFAULT_OPACITY)
+                .watermark(Positions.BOTTOM_LEFT, ImageIO.read(waterMarkFile), DEFAULT_OPACITY)
                 // 输出到文件
                 .toFile(targetFile);
     }
@@ -70,7 +70,7 @@ public class ImageOperationUtils {
                 // 设置图片大小
                 .size(image.getWidth(), image.getHeight())
                 // 加水印 参数：1.水印位置 2.水印图片 3.不透明度0.0-1.0
-                .watermark(Positions.BOTTOM_RIGHT, bufferedImage, DEFAULT_OPACITY)
+                .watermark(Positions.BOTTOM_LEFT, bufferedImage, DEFAULT_OPACITY)
                 // 输出到文件
                 .toFile(targetFile);
     }
@@ -96,7 +96,7 @@ public class ImageOperationUtils {
                 // 设置图片大小
                 .size(image.getWidth(), image.getHeight())
                 // 加水印 参数：1.水印位置 2.水印图片 3.不透明度0.0-1.0
-                .watermark(Positions.BOTTOM_RIGHT, bufferedImage, DEFAULT_OPACITY)
+                .watermark(Positions.BOTTOM_LEFT, bufferedImage, DEFAULT_OPACITY)
                 // 输出到文件
                 .asBufferedImage();
     }
@@ -105,7 +105,7 @@ public class ImageOperationUtils {
      * 给图片添加文字型水印
      *
      * @param resourceImageUrl 须加水印图片
-     * @param outputStream 输出流
+     * @param outputStream     输出流
      * @param text             水印文字
      * @return BufferedImage
      * @throws IOException
@@ -123,7 +123,7 @@ public class ImageOperationUtils {
                 // 设置图片大小
                 .size(image.getWidth(), image.getHeight())
                 // 加水印 参数：1.水印位置 2.水印图片 3.不透明度0.0-1.0
-                .watermark(Positions.BOTTOM_RIGHT, bufferedImage, DEFAULT_OPACITY)
+                .watermark(Positions.BOTTOM_LEFT, bufferedImage, DEFAULT_OPACITY)
                 .outputFormat("jpg")
                 // 输出到文件
                 .toOutputStream(outputStream);
@@ -146,7 +146,8 @@ public class ImageOperationUtils {
         int reduceScale = 30;
         //根据图片大小动态设置字体大小
         int fontSize = size / reduceScale < minFontSize ? minFontSize : size / reduceScale;
-
+        // 设置字体阴影大小
+        int offset = fontSize / 10;
         final Font font = new Font("微软雅黑", Font.BOLD, fontSize);
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -155,16 +156,25 @@ public class ImageOperationUtils {
 
         g = image.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(Color.white);
         g.setFont(font);
 
+
         if (StringUtils.isNotBlank(text)) {
-            g.drawString(text, fontSize, height - fontSize * 2);
-            g.drawString(AthenaDateUtils.format(new Date(), AthenaDateUtils.FULL_DATE_TIME_FORMAT.getPattern()), fontSize, height - fontSize / 2);
+            String format = AthenaDateUtils.format(new Date(), AthenaDateUtils.FULL_DATE_TIME_FORMAT.getPattern());
+            g.setColor(Color.black);
+            drawStringByGraphics(g, fontSize + offset, (height - fontSize * 2) + offset, text);
+            drawStringByGraphics(g, fontSize + offset, (height - fontSize / 2) + offset, format);
+
+            g.setColor(Color.white);
+            drawStringByGraphics(g, fontSize, height - fontSize * 2, text);
+            drawStringByGraphics(g, fontSize, height - fontSize / 2, format);
         }
 
         g.dispose();
         return image;
     }
 
+    private static void drawStringByGraphics(Graphics2D g, int x, int y, String text) {
+        g.drawString(text, x, y);
+    }
 }
