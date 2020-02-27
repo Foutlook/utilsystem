@@ -8,7 +8,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -34,10 +33,11 @@ public class ImageOperationUtils {
 
         // 获取原图文件
         File resourceFile = new File(resourceImageUrl);
-        File waterMarkFile = new File(waterMarkUrl);
-        File targetFile = new File(targetImageUrl);
         // ImageIO读取图片
         BufferedImage image = ImageIO.read(resourceFile);
+
+        File waterMarkFile = new File(waterMarkUrl);
+        File targetFile = new File(targetImageUrl);
 
         Thumbnails.of(image)
                 // 设置图片大小
@@ -60,9 +60,9 @@ public class ImageOperationUtils {
 
         // 获取原图文件
         File resourceFile = new File(resourceImageUrl);
-        File targetFile = new File(targetImageUrl);
         // ImageIO读取图片
         BufferedImage image = ImageIO.read(resourceFile);
+        File targetFile = new File(targetImageUrl);
 
         BufferedImage bufferedImage = handleTextWaterMark(text, image.getWidth(), image.getHeight());
 
@@ -127,7 +127,6 @@ public class ImageOperationUtils {
                 .outputFormat("jpg")
                 // 输出到文件
                 .toOutputStream(outputStream);
-
     }
 
     /**
