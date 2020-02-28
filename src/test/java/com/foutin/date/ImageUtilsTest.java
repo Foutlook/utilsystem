@@ -50,7 +50,7 @@ public class ImageUtilsTest extends BaseTest {
         String path = "http://wwwarehouse.oss-cn-hangzhou.aliyuncs.com/model/big/f3f4d675ed384a6db93a6a0887d7aa46.jpg";
         String defautString = "?x-oss-process=image/watermark";
 
-        String text = "车架号xxxx";
+        String text = "车架号xxxx12121212121213331111111111111111211111111111111111111111111111111111111111";
         String type = "fangzhengshusong";
         String textBase64 = getBase64(text);
         System.out.println(textBase64);
@@ -59,7 +59,7 @@ public class ImageUtilsTest extends BaseTest {
         String size = "size_30";
         String shadow = "shadow_50";
         String color = "color_FFFFFF";
-        String g = "g_sw";
+        String g = "g_east";
         String x = "x_10";
         String y = "y_10";
 
