@@ -5,6 +5,8 @@ import com.foutin.utils.DateUtils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author xingkai.fan
@@ -22,5 +24,7 @@ public class FanXingTest {
 
         Date date = DateUtils.addDay(parse, -3);
         System.out.println(dateFormat.format(date));
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
     }
 }
