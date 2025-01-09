@@ -1,5 +1,6 @@
-package com.foutin.nio.netty.echo;
+package com.foutin.nio.netty.decoding;
 
+import com.foutin.nio.netty.echo.NettyEchoClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;

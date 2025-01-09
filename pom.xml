@@ -17,7 +17,7 @@
         <junit.version>4.12</junit.version>
 
         <grpc.version>1.17.1</grpc.version>
-        <protobuf.version>3.5.0</protobuf.version>
+        <protobuf.version>3.6.1</protobuf.version>
         <poi.version>3.17</poi.version>
     </properties>
 
@@ -252,6 +252,12 @@
             <version>1.18.24</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -271,6 +277,40 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+
+            <!--使用protobuf-maven-plugin插件，可以非常方便地生成消息的POJO类和Builder（构造者）类的Java代码。-->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!--proto 文件路径-->
+                    <protoSourceRoot>
+                        ${project.basedir}/protobuf/im
+                    </protoSourceRoot>
+                    <!--目标路径-->
+                    <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                    <!--设置是否在生成 Java 文件之前清空 outputDirectory 的文件-->
+                    <clearOutputDirectory>false</clearOutputDirectory>
+                    <!--临时目录-->
+                    <temporaryProtoFileDirectory>
+                        ${project.build.directory}/protoc-temp
+                    </temporaryProtoFileDirectory>
+                    <!--protoc 可执行文件路径-->
+                    <protocExecutable>
+                        ${project.basedir}/protobuf/protoc3.6.1.exe
+                    </protocExecutable>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

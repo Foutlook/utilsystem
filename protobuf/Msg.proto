@@ -1,0 +1,14 @@
+// [开始头部声明]
+syntax = "proto3";
+package com.foutin.nio.netty.serialize.protocol;
+// [结束头部声明]
+// [开始 java 选项配置]
+option java_package = "com.foutin.nio.netty.serialize.protocol";
+option java_outer_classname = "MsgProtos";
+// [结束 java 选项配置]
+// [开始消息定义]
+message Msg {
+  uint32 id = 1; //消息 ID
+  string content = 2;//消息内容
+}
+// [结束消息定义]
