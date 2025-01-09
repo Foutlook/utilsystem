@@ -41,7 +41,7 @@ public class WebPageHandler extends SimpleChannelInboundHandler<FullHttpRequest>
          */
         HttpProtocolHelper.cacheHttpProtocol(ctx, request);
 
-        String webContent = IOUtil.loadResourceFile("index.html");
+        String webContent = IOUtil.loadResourceFile("com/foutin/nio/webSocket/index.html");
 
         /**
          * 发送web 操作页面
